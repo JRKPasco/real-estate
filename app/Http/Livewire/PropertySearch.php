@@ -11,6 +11,6 @@ class PropertySearch extends Component
     {
         return view('livewire.property-search', [
             'properties' => Property::latest()->get()
-        ]);
+        ])->layout('layouts.base');
     }
 }

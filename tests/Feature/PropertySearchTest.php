@@ -13,13 +13,31 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 class PropertySearchTest extends TestCase
 {
     use RefreshDatabase;
+
+    /** @test */
+    public function the_search_page_can_be_viewed()
+    {
+        $this->withoutExceptionHandling();
+
+        $this->get('/search')
+             ->assertStatus(200)
+             ->assertSeeLivewire('property-search');
+    }
     
     /** @test */
-    public function test_newest_properties_are_listed_first()
+    public function new_properties_are_listed_first()
     {
+        $oldProperty = Property::factory()->state([
+            'created_at' => now()->subDay()
+        ])->create()->fresh();
+
+        $newProperty = Property::factory()->state([
+            'created_at' => now()
+        ])->create()->fresh();
+
         $properties = new Collection([
-            Property::factory()->state(['created_at' => now()])->create()->fresh(),
-            Property::factory()->state(['created_at' => now()->subDay()])->create()->fresh(),
+            $newProperty,
+            $oldProperty,
         ]);
 
         Livewire::test(PropertySearch::class)
